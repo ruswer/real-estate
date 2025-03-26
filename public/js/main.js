@@ -77,6 +77,25 @@
             }
         }
     });
+    // Modal ochilganda navbarni tezda yashirish
+    $('#propertyModal').on('shown.bs.modal', function () {
+        var navbar = document.querySelector('.navbar');
+        navbar.style.transition = 'none';  // Animatsiya effektini vaqtincha o'chirish
+        navbar.style.opacity = '0';  // Navbarni yashirish
+    });
+
+    // Modal yopilganda navbarni tezda ko'rsatish
+    $('#propertyModal').on('hidden.bs.modal', function () {
+        var navbar = document.querySelector('.navbar');
+        navbar.style.transition = 'none';  // Animatsiya effektini vaqtincha o'chirish
+        navbar.style.opacity = '1';  // Navbarni ko'rsatish
+
+        // Tezda ko'rsatishni amalga oshirish uchun 10ms kutib turing
+        setTimeout(function() {
+            navbar.style.transition = 'opacity 0.3s ease-in-out';  // Animatsiya qaytadan faollashadi
+        }, 10);  // Tezda qayta boshlanishi uchun qisqa vaqt
+    });
+
     
 })(jQuery);
 

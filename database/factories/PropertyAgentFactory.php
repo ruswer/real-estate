@@ -16,7 +16,6 @@ class PropertyAgentFactory extends Factory
             'name' => $this->faker->name(),
             'user_id' => User::factory(),
             'designation' => $this->faker->jobTitle(),
-            'image' => $this->faker->imageUrl(200, 200, 'people', true, 'agent'), // Tasodifiy rasm URL
             'facebook' => $this->faker->url(),
             'twitter' => $this->faker->url(),
             'instagram' => $this->faker->url(),

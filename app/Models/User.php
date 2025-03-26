@@ -50,4 +50,11 @@ class User extends Authenticatable
     {
         return $this->role->name === 'user';
     }
+
+     // Polimorfik aloqani o'rnatish
+    public function photo()
+    {
+       return $this->morphOne(Image::class, 'imageable');
+    }
+    
 }

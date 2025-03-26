@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Models\Photo;
 
 class PropertyAgent extends Model
 {
@@ -13,7 +14,6 @@ class PropertyAgent extends Model
         'user_id',
         'name',
         'designation',
-        'image',
         'facebook',
         'twitter',
         'instagram',
@@ -23,4 +23,10 @@ class PropertyAgent extends Model
     {
         return $this->hasMany(Property::class);
     }
+
+    public function image()
+    {
+        return $this->morphOne(Photo::class, 'imageable');  // Photo o'rniga Image
+    }
+
 }

@@ -7,9 +7,7 @@
             <div class="col-md-4">
                 <div class="card shadow-sm text-center">
                     <div class="card-body">
-                        <img src="{{ asset('storage/' . $agent->image) }}" alt="Agent Avatar" class="rounded-circle mb-3"
-                            width="150" height="150" style="object-fit: cover; border-radius: 50%;">
-
+                        <img src="{{ asset('storage/' . ($agent->image ? $agent->image->path : 'default-avatar.jpg')) }}" alt="Agent Avatar" class="rounded-circle mb-3" width="150" height="150" style="object-fit: cover; border-radius: 50%;">
                         <h2 class="h4">{{ $agent->name }}</h2>
                         <p class="text-muted">{{ $agent->designation }}</p>
                         <span class="badge bg-success">Agent</span>
@@ -30,7 +28,7 @@
                 <div class="card shadow-sm">
                     <div class="card-body">
                         <h3 class="h5 mb-4">Mening Mulklarim</h3>
-
+            
                         <!-- Statistikalar -->
                         <div class="row text-center mb-4">
                             <div class="col-md-3">
@@ -58,13 +56,93 @@
                                 </div>
                             </div>
                         </div>
-
+            
                         <!-- Yangi Mulk Qo'shish -->
                         <div class="text-end mb-3">
-                            <a href="{{ route('properties.create') }}" class="btn btn-success">+ Yangi Mulk
-                                Qo‘shish</a>
+                            <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#propertyModal">+ Yangi Mulk Qo‘shish</button>
                         </div>
-
+            
+                        <!-- Mulk Qo‘shish Modal -->
+                        <div class="modal fade" id="propertyModal" tabindex="-1" aria-labelledby="propertyModalLabel" aria-hidden="true">
+                            <div class="modal-dialog modal-dialog-centered modal-lg"> <!-- Modalni kengligini .modal-lg bilan o‘zgartirdik -->
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="propertyModalLabel">Yangi Mulk Qo‘shish</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <!-- Yangi Mulk Qo‘shish Formasi -->
+                                        <form action="{{ route('properties.store') }}" method="POST">
+                                            @csrf
+                        
+                                            <!-- Status -->
+                                            <div class="mb-3">
+                                                <label for="status" class="form-label">Holat</label>
+                                                <select class="form-select" id="status" name="status" required>
+                                                    <option value="active">Faol</option>
+                                                    <option value="pending">Ko‘rib chiqilmoqda</option>
+                                                    <option value="rejected">Rad etilgan</option>
+                                                </select>
+                                            </div>
+                        
+                                            <!-- Property Type -->
+                                            <div class="mb-3">
+                                                <label for="property_type_id" class="form-label">Mulk turi</label>
+                                                <select class="form-select" id="property_type_id" name="property_type_id" required>
+                                                    <option value="">Mulk turini tanlang</option>
+                                                    @foreach($propertyTypes as $type)
+                                                        <option value="{{ $type->id }}">{{ $type->name }}</option>
+                                                    @endforeach
+                                                </select>
+                                            </div>
+                        
+                                            <!-- Mulk Nomi -->
+                                            <div class="mb-3">
+                                                <label for="title" class="form-label">Mulk nomi</label>
+                                                <input type="text" class="form-control" id="title" name="title" required>
+                                            </div>
+                        
+                                            <!-- Tavsif -->
+                                            <div class="mb-3">
+                                                <label for="description" class="form-label">Tavsif</label>
+                                                <textarea class="form-control" id="description" name="description" rows="4" required></textarea>
+                                            </div>
+                        
+                                            <!-- Narx -->
+                                            <div class="mb-3">
+                                                <label for="price" class="form-label">Narxi</label>
+                                                <input type="number" class="form-control" id="price" name="price" required>
+                                            </div>
+                        
+                                            <!-- Manzil -->
+                                            <div class="mb-3">
+                                                <label for="location" class="form-label">Manzil</label>
+                                                <input type="text" class="form-control" id="location" name="location" required>
+                                            </div>
+                        
+                                            <!-- Ijara/Sotuv -->
+                                            <div class="mb-3">
+                                                <label for="is_for_rent_or_sale" class="form-label">Ijara yoki Sotuv</label>
+                                                <select class="form-select" id="is_for_rent_or_sale" name="is_for_rent_or_sale" required>
+                                                    <option value="">Ijara yoki Sotuvni tanlang</option>
+                                                    <option value="rent">Ijara uchun</option>
+                                                    <option value="sale">Sotuv uchun</option>
+                                                </select>
+                                            </div>
+                        
+                                           <!-- Cancel button -->
+                                           <div class="modal-footer d-flex justify-content-right gap-2">
+                                               <!-- Cancel button -->
+                                               <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Bekor qilish</button>
+                                               <!-- Save button -->
+                                               <button type="submit" class="btn btn-primary">Saqlash</button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
                         <!-- Agent qo‘shgan mulklar ro‘yxati -->
                         <div class="table-responsive">
                             @if ($properties->isNotEmpty())
@@ -100,49 +178,34 @@
                                                     @if ($property->status === 'active')
                                                         <span class="badge bg-success">Faol</span>
                                                     @elseif($property->status === 'pending')
-                                                        <span class="badge bg-warning text-dark">Ko‘rib
-                                                            chiqilmoqda</span>
+                                                        <span class="badge bg-warning text-dark">Ko‘rib chiqilmoqda</span>
                                                     @else
                                                         <span class="badge bg-danger">Rad etilgan</span>
                                                     @endif
                                                 </td>
                                                 <td>
-                                                    <a href="{{ route('properties.edit', $property->id) }}"
-                                                        class="btn btn-sm btn-primary">Tahrirlash</a>
-                                                    <button type="button" class="btn btn-sm btn-danger delete-btn"
-                                                        data-bs-toggle="modal"
-                                                        data-bs-target="#deleteModal-{{ $property->id }}">
-                                                        O‘chirish
-                                                    </button>
+                                                    <a href="{{ route('properties.edit', $property->id) }}" class="btn btn-sm btn-primary">Tahrirlash</a>
+                                                    <button type="button" class="btn btn-sm btn-danger delete-btn" data-bs-toggle="modal" data-bs-target="#deleteModal-{{ $property->id }}">O‘chirish</button>
                                                 </td>
                                             </tr>
-
+            
                                             <!-- Har bir mulk uchun alohida modal -->
-                                            <div class="modal fade" id="deleteModal-{{ $property->id }}" tabindex="-1"
-                                                aria-labelledby="deleteModalLabel-{{ $property->id }}"
-                                                aria-hidden="true">
+                                            <div class="modal fade" id="deleteModal-{{ $property->id }}" tabindex="-1" aria-labelledby="deleteModalLabel-{{ $property->id }}" aria-hidden="true">
                                                 <div class="modal-dialog modal-dialog-centered">
                                                     <div class="modal-content">
                                                         <div class="modal-header">
-                                                            <h5 class="modal-title"
-                                                                id="deleteModalLabel-{{ $property->id }}">Tasdiqlash
-                                                            </h5>
-                                                            <button type="button" class="btn-close"
-                                                                data-bs-dismiss="modal" aria-label="Close"></button>
+                                                            <h5 class="modal-title" id="deleteModalLabel-{{ $property->id }}">Tasdiqlash</h5>
+                                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                                         </div>
                                                         <div class="modal-body">
                                                             Haqiqatan ham ushbu ob'ektni o‘chirmoqchimisiz?
                                                         </div>
                                                         <div class="modal-footer">
-                                                            <button type="button" class="btn btn-secondary"
-                                                                data-bs-dismiss="modal">Bekor qilish</button>
-                                                            <form
-                                                                action="{{ route('properties.destroy', $property->id) }}"
-                                                                method="POST">
+                                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Bekor qilish</button>
+                                                            <form action="{{ route('properties.destroy', $property->id) }}" method="POST">
                                                                 @csrf
                                                                 @method('DELETE')
-                                                                <button type="submit" class="btn btn-danger">Ha,
-                                                                    o‘chirish</button>
+                                                                <button type="submit" class="btn btn-danger">Ha, o‘chirish</button>
                                                             </form>
                                                         </div>
                                                     </div>
@@ -153,15 +216,14 @@
                                 </table>
                             @else
                                 <div class="alert alert-info" role="alert">
-                                    Hozirda sizda qo‘shilgan mulklar mavjud emas. <a
-                                        href="{{ route('properties.create') }}" class="alert-link">Yangi mulk
-                                        qo‘shish</a> uchun shu yerni bosing.
+                                    Hozirda sizda qo‘shilgan mulklar mavjud emas. <a href="{{ route('properties.create') }}" class="alert-link">Yangi mulk qo‘shish</a> uchun shu yerni bosing.
                                 </div>
                             @endif
                         </div>
                     </div>
                 </div>
             </div>
+            
 
         </div>
     </div>

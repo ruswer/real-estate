@@ -14,40 +14,73 @@
         </div>
 
         <!-- Register Form -->
-        <form id="register-form" method="POST" action="{{ route('register') }}" enctype="multipart/form-data"
-            class="mt-4">
+        <form id="register-form" method="POST" action="{{ route('register') }}" enctype="multipart/form-data" class="mt-4">
             @csrf
-
+        
             <div class="flex gap-2">
                 <input type="text" name="first_name" placeholder="First Name" required
-                    class="w-1/2 p-2 border rounded">
+                    class="w-1/2 p-2 border rounded @error('first_name') border-red-500 @enderror">
+                @error('first_name')
+                    <div class="text-red-500 text-sm mt-1">{{ $message }}</div>
+                @enderror
+        
                 <input type="text" name="last_name" placeholder="Last Name" required
-                    class="w-1/2 p-2 border rounded">
+                    class="w-1/2 p-2 border rounded @error('last_name') border-red-500 @enderror">
+                @error('last_name')
+                    <div class="text-red-500 text-sm mt-1">{{ $message }}</div>
+                @enderror
             </div>
-
+        
             <input type="email" name="email" placeholder="Email Address" required
-                class="w-full mt-2 p-2 border rounded">
+                class="w-full mt-2 p-2 border rounded @error('email') border-red-500 @enderror">
+            @error('email')
+                <div class="text-red-500 text-sm mt-1">{{ $message }}</div>
+            @enderror
+        
             <input type="password" name="password" placeholder="Password" required
-                class="w-full mt-2 p-2 border rounded">
-
-            <!-- Role (User = 3, Agent = 2) -->
+                class="w-full mt-2 p-2 border rounded @error('password') border-red-500 @enderror">
+            @error('password')
+                <div class="text-red-500 text-sm mt-1">{{ $message }}</div>
+            @enderror
+        
             <input type="hidden" name="role_id" id="role_id" value="3">
-
-            <!-- Agent Fields -->
+        
             <div id="agent-fields" class="hidden">
                 <input type="text" name="designation" placeholder="Designation (Lavozim)"
-                    class="w-full mt-2 p-2 border rounded">
-                <input type="file" name="image" class="w-full mt-2 p-2 border rounded">
-                <input type="text" name="facebook" placeholder="Facebook URL" class="w-full mt-2 p-2 border rounded">
-                <input type="text" name="twitter" placeholder="Twitter URL" class="w-full mt-2 p-2 border rounded">
+                    class="w-full mt-2 p-2 border rounded @error('designation') border-red-500 @enderror">
+                @error('designation')
+                    <div class="text-red-500 text-sm mt-1">{{ $message }}</div>
+                @enderror
+        
+                <input type="file" name="image" class="w-full mt-2 p-2 border rounded @error('image') border-red-500 @enderror">
+                @error('image')
+                    <div class="text-red-500 text-sm mt-1">{{ $message }}</div>
+                @enderror
+        
+                <input type="text" name="facebook" placeholder="Facebook URL"
+                    class="w-full mt-2 p-2 border rounded @error('facebook') border-red-500 @enderror">
+                @error('facebook')
+                    <div class="text-red-500 text-sm mt-1">{{ $message }}</div>
+                @enderror
+        
+                <input type="text" name="twitter" placeholder="Twitter URL"
+                    class="w-full mt-2 p-2 border rounded @error('twitter') border-red-500 @enderror">
+                @error('twitter')
+                    <div class="text-red-500 text-sm mt-1">{{ $message }}</div>
+                @enderror
+        
                 <input type="text" name="instagram" placeholder="Instagram URL"
-                    class="w-full mt-2 p-2 border rounded">
+                    class="w-full mt-2 p-2 border rounded @error('instagram') border-red-500 @enderror">
+                @error('instagram')
+                    <div class="text-red-500 text-sm mt-1">{{ $message }}</div>
+                @enderror
             </div>
-
+        
             <button type="submit" id="continue-btn" class="w-full bg-orange-600 text-white py-2 mt-3 rounded">
                 Register
             </button>
         </form>
+        
 
         <p class="text-center mt-3">
             Already have an account? <a href="{{ route('login') }}" class="text-blue-600">Sign In</a>
