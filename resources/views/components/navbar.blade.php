@@ -36,9 +36,17 @@
 
             @auth
                 <div class="dropdown">
-                    <a href="#" class="btn btn-secondary dropdown-toggle" data-bs-toggle="dropdown">
-                        {{ Auth::user()->name }}
-                    </a>
+                    @auth
+                        @if(Auth::user()->role_id == 2)
+                            <a href="#" class="btn btn-secondary dropdown-toggle" data-bs-toggle="dropdown">
+                                {{ Auth::user()->agent->name }}
+                            </a>
+                        @else
+                            <a href="#" class="btn btn-secondary dropdown-toggle" data-bs-toggle="dropdown">
+                                {{ Auth::user()->name }}
+                            </a>
+                        @endif
+                    @endauth
                     <div class="dropdown-menu">
                         <!-- Profile tugmasi -->
                         @if (Auth::check() && Auth::user()->role_id == 2)

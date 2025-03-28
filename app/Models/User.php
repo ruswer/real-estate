@@ -6,6 +6,8 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use App\Models\Photo;
+use App\Models\PropertyAgent;
 
 class User extends Authenticatable
 {
@@ -50,11 +52,15 @@ class User extends Authenticatable
     {
         return $this->role->name === 'user';
     }
-
-     // Polimorfik aloqani o'rnatish
-    public function photo()
+    public function agent()
     {
-       return $this->morphOne(Image::class, 'imageable');
+        return $this->hasOne(PropertyAgent::class);
+    }
+    
+     // Polimorfik aloqani o'rnatish
+    public function image()
+    {
+       return $this->morphOne(Photo::class, 'imageable');
     }
     
 }

@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Support\Facades\Storage;
 use App\Models\Property;
 use App\Models\PropertyType;
+use App\Models\PropertyImage;
 use Illuminate\Http\Request;
 
 class PropertyController extends Controller
@@ -40,22 +42,44 @@ class PropertyController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'title' => 'required|string|max:255',
+            'title' => 'required',
+            'description' => 'required',
             'price' => 'required|numeric',
-            'location' => 'required|string',
-            'image' => 'nullable|image|mimes:jpg,png,jpeg,gif,svg|max:2048'
+            'location' => 'required',
+            'status' => 'required',
+            'property_type_id' => 'required',
+            'property_agent_id' => 'required|exists:property_agents,id',
+            'is_for_rent_or_sale' => 'required|in:rent,sale',
+            'images' => 'nullable|array|max:5', // Maksimal 5 ta rasm yuklash mumkin
+            'images.*' => 'image|mimes:jpeg,png,jpg,gif|max:2048' // Har bir rasm validatsiyasi
         ]);
-
-        $data = $request->all();
-        $data['user_id'] = auth()->id();
-
-        if ($request->hasFile('image')) {
-            $data['image'] = $request->file('image')->store('properties', 'public');
+    
+        // 1️⃣ Property yaratish
+        $property = Property::create([
+            'user_id' => auth()->id(),
+            'status' => $request->status,
+            'property_type_id' => $request->property_type_id,
+            'property_agent_id' => $request->property_agent_id,
+            'title' => $request->title,
+            'description' => $request->description,
+            'price' => $request->price,
+            'location' => $request->location,
+            'is_for_rent' => $request->is_for_rent_or_sale === 'rent',
+            'is_for_sale' => $request->is_for_rent_or_sale === 'sale',
+        ]);
+        
+        if ($request->hasFile('images')) {
+            foreach ($request->file('images') as $image) {
+                $imagePath = $image->store('properties', 'public'); // Rasmni saqlash
+        
+                PropertyImage::create([
+                    'property_id' => $property->id,
+                    'image_path' => $imagePath
+                ]);
+            }
         }
-
-        Property::create($data);
-
-        return redirect()->route('properties.index')->with('success', 'Property added successfully!');
+        
+        return redirect()->back()->with('success', 'Mulk muvaffaqiyatli qo‘shildi!');
     }
 
     public function show(Property $property)
@@ -69,24 +93,73 @@ class PropertyController extends Controller
     }
 
     public function update(Request $request, Property $property)
-    {
-        $request->validate([
-            'title' => 'required|string|max:255',
-            'price' => 'required|numeric',
-            'location' => 'required|string',
-            'image' => 'nullable|image|mimes:jpg,png,jpeg,gif,svg|max:2048'
-        ]);
+{
+    // Debugging uchun (agar kerak bo‘lsa, o‘chirib qo‘yishingiz mumkin)
+    // dd(request()->all(), request()->file('images'));
 
-        $data = $request->all();
+    // Validatsiya
+    $request->validate([
+        'title' => 'required|string',
+        'description' => 'required|string',
+        'price' => 'required|numeric',
+        'location' => 'required|string',
+        'status' => 'required|string',
+        'property_type_id' => 'required|exists:property_types,id',
+        'property_agent_id' => 'required|exists:property_agents,id',
+        'is_for_rent_or_sale' => 'required|in:rent,sale',
+        'images' => 'nullable|array|max:5', // Maksimal 5 ta rasm yuklash mumkin
+        'existing_images' => 'nullable|array', // Eski rasmlar
+        'images.*' => 'image|mimes:jpeg,png,jpg,gif|max:2048' // Yangi rasmlar uchun
+    ]);
 
-        if ($request->hasFile('image')) {
-            $data['image'] = $request->file('image')->store('properties', 'public');
-        }
+    // ✅ Mulkni yangilash
+    $property->update([
+        'title' => $request->title,
+        'description' => $request->description,
+        'price' => $request->price,
+        'location' => $request->location,
+        'status' => $request->status,
+        'property_type_id' => $request->property_type_id,
+        'property_agent_id' => $request->property_agent_id,
+        'is_for_rent' => $request->is_for_rent_or_sale == 'rent',
+        'is_for_sale' => $request->is_for_rent_or_sale == 'sale'
+    ]);
 
-        $property->update($data);
+    // 🖼️ Eski rasmlarni boshqarish
+    $existingImages = $request->input('existing_images', []); // Forma orqali kelgan eski rasmlar
+    $currentImages = $property->images->pluck('image_path')->toArray(); // Hozirgi rasmlar
 
-        return redirect()->route('properties.index')->with('success', 'Property updated successfully!');
+    // O‘chirilgan rasmlarni aniqlash va o‘chirish
+    $imagesToDelete = array_diff($currentImages, $existingImages);
+    foreach ($imagesToDelete as $imagePath) {
+        // Bazadan o‘chirish
+        PropertyImage::where('property_id', $property->id)
+                     ->where('image_path', $imagePath)
+                     ->delete();
+        // Storage’dan o‘chirish
+        Storage::disk('public')->delete($imagePath);
     }
+
+    // 🖼️ Yangi rasmlarni yuklash
+    if ($request->hasFile('images')) {
+        // Joriy rasmlar sonini hisoblash
+        $currentImageCount = count($existingImages);
+        $maxImages = 5; // Maksimal rasm chegarasi
+        $remainingSlots = $maxImages - $currentImageCount;
+
+        // Agar yangi rasmlar soni chegaradan oshmasa, yuklash
+        $newImages = array_slice($request->file('images'), 0, $remainingSlots);
+        foreach ($newImages as $image) {
+            $imagePath = $image->store('properties', 'public');
+            PropertyImage::create([
+                'property_id' => $property->id,
+                'image_path' => $imagePath
+            ]);
+        }
+    }
+
+    return redirect()->route('agent.dashboard')->with('success', 'Mulk muvaffaqiyatli yangilandi!');
+}
 
     public function destroy(Property $property)
     {

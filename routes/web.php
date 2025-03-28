@@ -36,6 +36,8 @@ Route::middleware(['auth', CheckRole::class . ':3'])->group(function () {
 
 Route::middleware(['auth', CheckRole::class . ':2'])->group(function () {
     Route::get('/agent/dashboard', [AgentDashboardController::class, 'index'])->name('agent.dashboard');
+    Route::get('/profile/agent/edit', [AgentDashboardController::class, 'edit'])->name('profile.agent.edit');
+    Route::match(['put', 'patch'], '/profile/agent/update', [AgentDashboardController::class, 'update'])->name('profile.agent.update');
     Route::delete('/properties/{id}', [AgentDashboardController::class, 'destroy'])->name('propertiesbyagent.destroy');
 });
 

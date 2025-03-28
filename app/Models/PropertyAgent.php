@@ -26,7 +26,7 @@ class PropertyAgent extends Model
 
     public function image()
     {
-        return $this->morphOne(Photo::class, 'imageable');  // Photo o'rniga Image
+        return $this->morphOne(Photo::class, 'imageable'); 
     }
 
 }

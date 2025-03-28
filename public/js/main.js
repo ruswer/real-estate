@@ -96,6 +96,47 @@
         }, 10);  // Tezda qayta boshlanishi uchun qisqa vaqt
     });
 
+    //Agent profileda property images qo'shish 
+    $(document).ready(function() {
+        $('#image-upload').on('change', function(event) {
+            let files = event.target.files;
+            
+            // Har bir yangi yuklangan fayl uchun
+            for (let i = 0; i < files.length; i++) {
+                let file = files[i];
+                let reader = new FileReader();
+
+                reader.onload = function(e) {
+                    let imgCard = `
+                        <div class="card border-0 shadow-sm" style="width: 120px; position: relative;">
+                            <img src="${e.target.result}" class="card-img-top rounded" style="height: 120px; object-fit: cover;">
+                            <button type="button" class="btn btn-danger btn-sm position-absolute top-0 end-0 m-1 remove-image">×</button>
+                        </div>`;
+                    $('#image-preview-container').append(imgCard);
+                };
+
+                reader.readAsDataURL(file);
+            }
+        });
+
+        // Rasmni o‘chirish tugmachasi
+        $(document).on('click', '.remove-image', function() {
+            $(this).closest('.card').remove();
+        });
+
+    });
+
+    //Property tahrirlash image UI dan uchirish
+    $(document).ready(function () {
+        $(".remove-image-one").click(function () {
+            if (confirm("Rostdan ham ushbu rasmni o‘chirmoqchimisiz?")) {
+                $(this).closest(".image-box").fadeOut(300, function () {
+                    $(this).remove(); // UI dan rasmni olib tashlash
+                });
+            }
+        });
+    });
+
     
 })(jQuery);
 
@@ -103,3 +144,16 @@
 function clearInput() {
     document.getElementById('searchInput').value = '';
 }
+
+//Agent profileda property delete funksiyasi
+document.addEventListener("DOMContentLoaded", function() {
+    let deleteButtons = document.querySelectorAll(".delete-btn");
+    let deleteForm = document.getElementById("deleteForm");
+
+    deleteButtons.forEach(button => {
+        button.addEventListener("click", function() {
+            let propertyId = this.getAttribute("data-id");
+            deleteForm.action = `/properties/${propertyId}`;
+        });
+    });
+});

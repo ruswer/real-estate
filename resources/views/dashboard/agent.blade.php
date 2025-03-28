@@ -12,12 +12,12 @@
                         <p class="text-muted">{{ $agent->designation }}</p>
                         <span class="badge bg-success">Agent</span>
                         <div class="mt-3">
-                            <a href="{{ $agent->facebook }}" class="text-primary me-2"><i
+                            <a href="{{ $agent->facebook }}" class="text-primary me-2" target="_blank"><i
                                     class="bi bi-facebook"></i></a>
-                            <a href="{{ $agent->twitter }}" class="text-info me-2"><i class="bi bi-twitter"></i></a>
-                            <a href="{{ $agent->instagram }}" class="text-danger"><i class="bi bi-instagram"></i></a>
+                            <a href="{{ $agent->twitter }}" class="text-info me-2" target="_blank"><i class="bi bi-twitter"></i></a>
+                            <a href="{{ $agent->instagram }}" class="text-danger" target="_blank"><i class="bi bi-instagram"></i></a>
                         </div>
-                        <a href="{{ route('profile.edit') }}" class="btn btn-primary btn-sm mt-3">Profilni
+                        <a href="{{ route('profile.agent.edit') }}" class="btn btn-primary btn-sm mt-3">Profilni
                             tahrirlash</a>
                     </div>
                 </div>
@@ -61,7 +61,7 @@
                         <div class="text-end mb-3">
                             <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#propertyModal">+ Yangi Mulk Qo‘shish</button>
                         </div>
-            
+
                         <!-- Mulk Qo‘shish Modal -->
                         <div class="modal fade" id="propertyModal" tabindex="-1" aria-labelledby="propertyModalLabel" aria-hidden="true">
                             <div class="modal-dialog modal-dialog-centered modal-lg"> <!-- Modalni kengligini .modal-lg bilan o‘zgartirdik -->
@@ -72,19 +72,19 @@
                                     </div>
                                     <div class="modal-body">
                                         <!-- Yangi Mulk Qo‘shish Formasi -->
-                                        <form action="{{ route('properties.store') }}" method="POST">
+                                        <form action="{{ route('properties.store') }}" method="POST" enctype="multipart/form-data" multiple accept="image/*">
                                             @csrf
                         
                                             <!-- Status -->
                                             <div class="mb-3">
                                                 <label for="status" class="form-label">Holat</label>
                                                 <select class="form-select" id="status" name="status" required>
-                                                    <option value="active">Faol</option>
-                                                    <option value="pending">Ko‘rib chiqilmoqda</option>
-                                                    <option value="rejected">Rad etilgan</option>
+                                                    <option value="available">Mavjud</option>
+                                                    <option value="sold">Sotilgan</option>
+                                                    <option value="pending">Kutilmoqda</option>
                                                 </select>
                                             </div>
-                        
+
                                             <!-- Property Type -->
                                             <div class="mb-3">
                                                 <label for="property_type_id" class="form-label">Mulk turi</label>
@@ -95,7 +95,8 @@
                                                     @endforeach
                                                 </select>
                                             </div>
-                        
+                                            <input type="hidden" name="property_agent_id" value="{{ $agent->id ?? '' }}">
+
                                             <!-- Mulk Nomi -->
                                             <div class="mb-3">
                                                 <label for="title" class="form-label">Mulk nomi</label>
@@ -130,6 +131,24 @@
                                                 </select>
                                             </div>
                         
+                                             <!-- Bir nechta rasm yuklash -->
+                                             <div class="mb-3">
+                                                <label class="form-label">Mulk rasmlari</label>
+                                                <div class="d-flex flex-wrap gap-3">
+                                                    <!-- Yuklangan rasmlar uchun joy -->
+                                                    <div id="image-preview-container" class="d-flex flex-wrap gap-2"></div>
+                                            
+                                                    <!-- Add More Pics tugmasi -->
+                                                    <div class="card text-center p-3 bg-light border border-danger" style="width: 120px; height: 120px;">
+                                                        <input type="file" id="image-upload" name="images[]" accept="image/*" multiple hidden>
+                                                        <label for="image-upload" class="d-flex flex-column align-items-center justify-content-center h-100 text-danger">
+                                                            <span class="fs-3 fw-bold">+</span>
+                                                            <span class="small">Add more pics</span>
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                            </div>                                                                                       
+
                                            <!-- Cancel button -->
                                            <div class="modal-footer d-flex justify-content-right gap-2">
                                                <!-- Cancel button -->
@@ -153,8 +172,8 @@
                                             <th>Title</th>
                                             <th>Turi</th>
                                             <th>Narxi</th>
-                                            <th>Holati</th>
                                             <th>Ijara/Sotuv</th>
+                                            <th>Holati</th>
                                             <th>Amallar</th>
                                         </tr>
                                     </thead>
@@ -175,12 +194,12 @@
                                                     @endif
                                                 </td>
                                                 <td>
-                                                    @if ($property->status === 'active')
-                                                        <span class="badge bg-success">Faol</span>
-                                                    @elseif($property->status === 'pending')
-                                                        <span class="badge bg-warning text-dark">Ko‘rib chiqilmoqda</span>
+                                                    @if ($property->status === 'available')
+                                                        <span class="badge bg-success">Mavjud</span>
+                                                    @elseif($property->status === 'sold')
+                                                        <span class="badge bg-warning text-dark">Sotilgan</span>
                                                     @else
-                                                        <span class="badge bg-danger">Rad etilgan</span>
+                                                        <span class="badge bg-danger">Kutilmoqda</span>
                                                     @endif
                                                 </td>
                                                 <td>
@@ -216,7 +235,7 @@
                                 </table>
                             @else
                                 <div class="alert alert-info" role="alert">
-                                    Hozirda sizda qo‘shilgan mulklar mavjud emas. <a href="{{ route('properties.create') }}" class="alert-link">Yangi mulk qo‘shish</a> uchun shu yerni bosing.
+                                    Hozirda sizda qo‘shilgan mulklar mavjud emas. <a href="" class="alert-link" data-bs-toggle="modal" data-bs-target="#propertyModal">Yangi mulk qo‘shish</a> uchun shu yerni bosing.
                                 </div>
                             @endif
                         </div>
@@ -224,22 +243,7 @@
                 </div>
             </div>
             
-
         </div>
     </div>
-    <!-- Script -->
-    <script>
-        document.addEventListener("DOMContentLoaded", function() {
-            let deleteButtons = document.querySelectorAll(".delete-btn");
-            let deleteForm = document.getElementById("deleteForm");
-
-            deleteButtons.forEach(button => {
-                button.addEventListener("click", function() {
-                    let propertyId = this.getAttribute("data-id");
-                    deleteForm.action = `/properties/${propertyId}`;
-                });
-            });
-        });
-    </script>
 
 </x-layouts.app>

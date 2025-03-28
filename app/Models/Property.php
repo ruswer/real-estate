@@ -39,4 +39,9 @@ class Property extends Model
     {
         return $this->belongsTo(PropertyAgent::class, 'property_agent_id');
     }
+    public function images()
+    {
+        return $this->hasMany(PropertyImage::class);
+    }
+
 }
