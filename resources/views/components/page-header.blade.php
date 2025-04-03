@@ -1,21 +1,7 @@
-<div class="container-fluid header bg-white p-0">
-    <div class="row g-0 align-items-center flex-column-reverse flex-md-row">
-        <div class="col-md-6 p-5 mt-lg-5">
-            <h1 class="display-5 animated fadeIn mb-4">Find A <span class="text-primary">Perfect Home</span> To
-                Live With Your Family</h1>
-            <p class="animated fadeIn mb-4 pb-2">Vero elitr justo clita lorem. Ipsum dolor at sed stet
-                sit diam no. Kasd rebum ipsum et diam justo clita et kasd rebum sea elitr.</p>
-            <a href="" class="btn btn-primary py-3 px-5 me-3 animated fadeIn">Get Started</a>
-        </div>
-        <div class="col-md-6 animated fadeIn">
-            <div class="owl-carousel header-carousel">
-                <div class="owl-carousel-item">
-                    <img class="img-fluid" src="img/carousel-1.jpg" alt="">
-                </div>
-                <div class="owl-carousel-item">
-                    <img class="img-fluid" src="img/carousel-2.jpg" alt="">
-                </div>
-            </div>
-        </div>
+<div class="container-fluid header bg-gradient p-0 d-flex align-items-center" style="height: 60vh; background-image: url('{{ asset('img/header.jpg') }}'); background-size: cover; background-position: center;">
+    <div class="container text-center text-white"> 
+        <h1 class="display-4 fw-bold mb-3 animated fadeIn text-white">Welcome to Your Dream Home</h1>
+        <p class="lead mb-4 animated fadeIn">Discover the perfect place to live with your family. Modern, comfortable, and affordable.</p>
+        <a href="#explore" class="btn btn-primary btn-lg px-4 py-2 animated fadeIn">Explore Now</a>
     </div>
 </div>

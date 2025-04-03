@@ -11,6 +11,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\UserDashboardController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Middleware\CheckRole;
+use App\Http\Controllers\AgentContactController;
 
 // =======================
 // ✅ AUTHENTICATION ROUTES
@@ -65,3 +66,9 @@ Route::get('/contact', [PageController::class, 'contact'])->name('contact');
 Route::resource('properties', PropertyController::class);
 Route::get('/property-types', [PropertyTypeController::class, 'index'])->name('property_types.index');
 Route::get('/property-agents', [PropertyAgentController::class, 'index'])->name('property_agents.index');
+
+// Foydalanuvchi ma'lumotlarini yuborish
+Route::post('/contact-agent', [AgentContactController::class, 'store'])->name('contact.agent');
+
+// Agent uchun bildirishnomalar
+Route::get('/agent/notifications', [AgentContactController::class, 'notifications'])->name('agent.notifications');

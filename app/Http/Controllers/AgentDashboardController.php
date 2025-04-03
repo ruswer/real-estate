@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Http\Request;
 use App\Models\Property;
 use App\Models\PropertyAgent;
+use App\Models\AgentContact;
 
 class AgentDashboardController extends Controller
 {
@@ -25,7 +26,10 @@ class AgentDashboardController extends Controller
         $pendingProperties = Property::where('property_agent_id', $agent->id)->where('status', 'pending')->get();
         $rejectedProperties = Property::where('property_agent_id', $agent->id)->where('status', 'rejected')->get();
 
-        return view('dashboard.agent', compact('agent', 'properties', 'activeProperties', 'pendingProperties', 'rejectedProperties'));
+        // Agentga yuborilgan barcha kontaktlarni olish
+        $contacts = AgentContact::latest()->get();
+
+        return view('dashboard.agent', compact('agent', 'properties', 'activeProperties', 'pendingProperties', 'rejectedProperties', 'contacts'));
     }
 
     public function edit()

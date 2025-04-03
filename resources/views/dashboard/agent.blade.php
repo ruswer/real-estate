@@ -243,6 +243,29 @@
                 </div>
             </div>
             
+            <!-- Bildirishnomalar -->
+            <div class="col-md-12">
+                <div class="card shadow-sm mt-4">
+                    <div class="card-body">
+                        <h3 class="h5 mb-4">Yangi Bildirishnomalar</h3>
+
+                        @if ($contacts->isEmpty())
+                            <div class="alert alert-info">Hozircha hech qanday bildirishnoma mavjud emas.</div>
+                        @else
+                            <div class="list-group">
+                                @foreach ($contacts as $contact)
+                                    <div class="list-group-item list-group-item-action mb-3">
+                                        <h5 class="mb-1">Ism: {{ $contact->name }}</h5>
+                                        <p class="mb-1"><i class="fa fa-phone-alt text-primary me-2"></i>Telefon: {{ $contact->phone }}</p>
+                                        <p class="mb-1"><i class="fa fa-home text-primary me-2"></i>Mulk ID: {{ $contact->property_id }}</p>
+                                        <small class="text-muted">Yuborilgan vaqti: {{ $contact->created_at->format('d-m-Y H:i') }}</small>
+                                    </div>
+                                @endforeach
+                            </div>
+                        @endif
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 

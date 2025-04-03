@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Support\Facades\Storage;
 use App\Models\Property;
+use App\Models\PropertyAgent;
 use App\Models\PropertyType;
 use App\Models\PropertyImage;
 use Illuminate\Http\Request;
@@ -82,9 +83,12 @@ class PropertyController extends Controller
         return redirect()->back()->with('success', 'Mulk muvaffaqiyatli qo‘shildi!');
     }
 
-    public function show(Property $property)
+    public function show($id)
     {
-        return view('properties.show', compact('property'));
+        $property = Property::with('images')->findOrFail($id);
+        $agent = PropertyAgent::where('id', $property->property_agent_id)->first(); // Agentni topish
+
+        return view('properties.show', compact('property', 'agent')); // Ma'lumotlarni Blade'ga yuborish
     }
 
     public function edit(Property $property)

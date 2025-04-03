@@ -159,6 +159,7 @@
             <div class="tab-content">
                 <div id="tab-1" class="tab-pane fade show p-0 active">
                     <div class="row g-4">
+                        @foreach ($properties as $property)
                         <div class="col-lg-4 col-md-6 wow fadeInUp" data-wow-delay="0.1s">
                             <div class="property-item rounded overflow-hidden">
                                 <div class="position-relative overflow-hidden">
@@ -173,8 +174,7 @@
                                 </div>
                                 <div class="p-4 pb-0">
                                     <h5 class="text-primary mb-3">$12,345</h5>
-                                    <a class="d-block h5 mb-2" href="{{ route('properties.index') }}">Golden Urban
-                                        House Foooor Sell</a>
+                                    <a class="d-block h5 mb-2" href="{{ route('properties.show', ['property' => $property->id]) }}">Golden Urban</a>                                        House Foooor Sell</a>
                                     <p><i class="fa fa-map-marker-alt text-primary me-2"></i>123 Street, New York,
                                         USA</p>
                                 </div>
@@ -188,6 +188,8 @@
                                 </div>
                             </div>
                         </div>
+                        @endforeach
+
                         <div class="col-lg-4 col-md-6 wow fadeInUp" data-wow-delay="0.3s">
                             <div class="property-item rounded overflow-hidden">
                                 <div class="position-relative overflow-hidden">

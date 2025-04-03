@@ -3,12 +3,14 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Models\Property;
 
 class PageController extends Controller
 {
     public function main()
     {
-        return view('main');
+        $properties = Property::all(); // Barcha mulklarni olish
+        return view('main', compact('properties')); // Blade faylga yuborish
     }
     public function about()
     {
