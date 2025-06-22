@@ -1,4 +1,4 @@
-#  Real Estate – Mulk sotish va ijaraga berish platformasi
+#  Real Estate – Mulk sotish va ijaraga berish platformasi(Tugatilmagan)
 
 Laravel asosida yaratilgan veb-ilova bo‘lib, foydalanuvchilarga turar-joy, ofis yoki boshqa mulklarni ijaraga berish yoki sotish uchun e’lonlar joylashtirish imkonini beradi. Admin panel, autentifikatsiya, CRUD tizimi va foydalanuvchi interfeysi mavjud.
 
